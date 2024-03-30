@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricheroes Assignment</title>
+    <link rel="stylesheet" href="https://unpkg.com/concrete.css@2.1.1/concrete.css">
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* Close button styles */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<main>
+<h1>Welcome to Smart NRR Calculator!</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Matches</th>
+        <th>Won</th>
+        <th>Lost</th>
+        <th>NRR</th>
+        <th>For</th>
+        <th>Against</th>
+        <th>Pts</th>
+    </tr>
+    <%points.forEach(point => {%>
+        <tr>
+            <td><%= point.id %></td>
+            <td><%= point.Name %></td>
+            <td><%= point.Matches %></td>
+            <td><%= point.Won %></td>
+            <td><%= point.Lost %></td>
+            <td><%= point.NRR %></td>
+            <td><%= point.For %></td>
+            <td><%= point.Against %></td>
+            <td><%= point.Pts %></td>
+        </tr>
+    <%})%>
+</table>
+    <h2> Please enter your query below</h2>
+    <form id="cricketForm">
+        <label for="yourTeam">Your Team:</label>
+        <select id="yourTeam" name="yourTeam">
+            <% points.forEach(function(team) { %>
+                <option value="<%= team.id %>"><%= team.Name %></option>
+            <% }); %>
+        </select>
+        <br><br>
+
+        <label for="oppositionTeam">Opposition Team:</label>
+        <select id="oppositionTeam" name="oppositionTeam">
+            <% points.forEach(function(team) { %>
+                <option value="<%= team.id %>"><%= team.Name %></option>
+            <% }); %>
+        </select>
+        <br><br>
+
+        <label for="overs">How many overs match?:</label>
+        <input type="number" id="overs" name="overs" min="1" required>
+        <br><br>
+
+        <label for="desiredPosition">Desired Position in Points Table:</label>
+        <input type="number" id="desiredPosition" name="desiredPosition" min="1" required>
+        <br><br>
+
+        <label for="tossResult">Toss Result:</label><br>
+        <select id="tossResult" name="tossResult" required>
+            <option value="Batting First">Batting First</option>
+            <option value="Bowling First">Bowling First</option>
+        </select><br><br>
+
+        <label for="runsScored">Runs Scored (Batting First) - Runs to Chase (Bowling First):</label>
+        <input type="number" id="runsScored" name="runsScored" required>
+        <br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Match Result:</p>
+            <div id="result"></div>
+        </div>
+
+    </div>
+
+</main>
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Display modal when form is submitted
+    document.getElementById("cricketForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Extract form data
+        var formData = {
+            team1: document.getElementById("yourTeam").value,
+            team2: document.getElementById("oppositionTeam").value,
+            overs: document.getElementById("overs").value,
+            position: document.getElementById("desiredPosition").value,
+            tossResult: document.getElementById("tossResult").value,
+            runsScored: document.getElementById("runsScored").value
+        };
+
+        // Make AJAX request to /calculate endpoint
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/calculate", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // Parse the JSON response
+                const result = JSON.parse(xhr.responseText);
+                // Display the result in the modal
+                document.getElementById("result").innerHTML = result.message;
+
+                // Show the modal
+                modal.style.display = "block";
+            }
+        };
+        xhr.send(JSON.stringify(formData));
+
+
+        // Show the modal
+        modal.style.display = "block";
+    });
+</script>
+</body>
+</html>
