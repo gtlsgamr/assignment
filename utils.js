@@ -63,6 +63,7 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
         if (tossResult === "Batting First") {
             const result = []
             const team2Position = points[team2 - 1].id
+            const team1Position = points[team1 - 1].id
             // Loop through all the possible runs that can be scored
             // by the batting team in the given overs played
             // and calculate the NRR for both teams
@@ -82,7 +83,7 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
                 )).toFixed(3));
 
                 if (
-                    team1Nrr > targetNrr && team1Nrr < aboveTargetNrr // Check if the NRR is between the target and the one above the target
+                    ( team1Nrr > targetNrr && team1Nrr < aboveTargetNrr) // Check if the NRR is between the target and the one above the target
                 ) {
                     result.push([runs, team1Nrr, team2Nrr])
                 }
