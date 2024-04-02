@@ -58,6 +58,7 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
         const team2AgainstOvers = parseFloat(points[team2 - 1].Against.split('/')[1]);
         const targetNrr = parseFloat(points[position - 1].NRR);
         const targetName = points[position - 1].Name;
+        const aboveTargetNrr = parseFloat(points[position - 2].NRR);
 
         if (tossResult === "Batting First") {
             const result = []
@@ -80,14 +81,8 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
                     team2AgainstOvers + oversPlayed
                 )).toFixed(3));
 
-                // Three possible scenarios:
-                // Opponent is at the required position, then our team should have higher NRR than opponent.
-                // Opponent is below the required position, then our team should have higher NRR than opponent and higher NRR than the required NRR.
-                // Opponent is above the required position, then our team should have higher NRR than opponent and higher NRR than the required NRR.
                 if (
-                    (team2Position === position && team1Nrr > team2Nrr) ||
-                    (team2Position > position && team1Nrr > team2Nrr && team1Nrr > targetNrr) ||
-                    (team2Position < position && team1Nrr > targetNrr && team1Nrr < team2Nrr)
+                    team1Nrr > targetNrr && team1Nrr < aboveTargetNrr // Check if the NRR is between the target and the one above the target
                 ) {
                     result.push([runs, team1Nrr, team2Nrr])
                 }
@@ -114,17 +109,11 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
                     team2AgainstRuns + runsScored + 1,
                     team2AgainstOvers + overs
                 )).toFixed(3));
-                
-                // Three possible scenarios:
-                // Opponent is at the required position, then our team should have higher NRR than opponent.
-                // Opponent is below the required position, then our team should have higher NRR than opponent and higer NRR than the required NRR.
-                // Opponent is above the required position, then our team should have higher NRR than opponent and higher NRR than the required NRR.
+
                 if (
-                    (team2Position === position && team1Nrr > team2Nrr) ||
-                    (team2Position > position && team1Nrr > team2Nrr && team1Nrr > targetNrr) ||
-                    (team2Position < position && team1Nrr > targetNrr && team1Nrr < team2Nrr)
+                    team1Nrr > targetNrr && team1Nrr < aboveTargetNrr // Check if the NRR is between the target and the one above the target
                 ) {
-                    result.push([overs, team1Nrr, team2Nrr])
+                    result.push([runs, team1Nrr, team2Nrr])
                 }
             })
             if (result.length === 0) {
