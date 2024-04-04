@@ -81,10 +81,12 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
                     team2AgainstRuns + runsScored,
                     team2AgainstOvers + oversPlayed
                 )).toFixed(3));
-
                 if (
-                    ( team1Nrr > targetNrr && team1Nrr < aboveTargetNrr) // Check if the NRR is between the target and the one above the target
+                    ( team2Position === position  && team1Nrr < aboveTargetNrr && team1Nrr > team2Nrr) ||
+                    (team2Position > position && team1Nrr > targetNrr && team1Nrr < aboveTargetNrr)         ||
+                    (team2Position < position && team1Nrr > targetNrr && team1Nrr < aboveTargetNrr && team1Nrr < team2Nrr)// Check if the NRR is between the target and the one above the target
                 ) {
+
                     result.push([runs, team1Nrr, team2Nrr])
                 }
             })
@@ -112,9 +114,11 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
                 )).toFixed(3));
 
                 if (
-                    team1Nrr > targetNrr && team1Nrr < aboveTargetNrr // Check if the NRR is between the target and the one above the target
+                    ( team2Position === position  && team1Nrr < aboveTargetNrr && team1Nrr > team2Nrr) ||
+                    (team2Position > position && team1Nrr > targetNrr && team1Nrr < aboveTargetNrr)         ||
+                    (team2Position < position && team1Nrr > targetNrr && team1Nrr < aboveTargetNrr && team1Nrr < team2Nrr)// Check if the NRR is between the target and the one above the target
                 ) {
-                    result.push([runs, team1Nrr, team2Nrr])
+                    result.push([overs, team1Nrr, team2Nrr])
                 }
             })
             if (result.length === 0) {

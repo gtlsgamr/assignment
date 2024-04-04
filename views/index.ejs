@@ -41,6 +41,23 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        /* Dark mode preference */
+        @media (prefers-color-scheme: dark) {
+            .modal {
+                background-color: rgba(255, 255, 255, 0.4); /* White w/ opacity */
+            }
+
+            .modal-content {
+                background-color: #333; /* Dark gray background */
+                border-color: #555; /* Dark gray border color */
+                color: #fff; /* White text color */
+            }
+
+            .close {
+                color: #fff; /* White close button color */
+            }
+        }
     </style>
 </head>
 <body>
