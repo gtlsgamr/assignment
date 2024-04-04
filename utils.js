@@ -6,6 +6,12 @@ const convertOversToActualOvers = (overs) => {
     return parseFloat((Math.floor(overs) + ((overs % 1) * 10) / 6).toFixed(3));
 }
 
+const convertRunsToOvers = (runs) => {
+    // One over is equal to 6 balls
+    // e.g. If the runs are 1.667, then the actual overs are 1 + (4/6) = 1.4
+    return (Math.floor(runs/6) + "." + ((runs%6)));
+}
+
 const calculateNrr = (forRuns, forOvers, againstRuns, againstOvers) => {
     // NRR = (Runs scored / Overs faced) - (Runs conceded / Overs bowled)
     const nrr = (forRuns / convertOversToActualOvers(forOvers)) - (againstRuns / convertOversToActualOvers(againstOvers));
@@ -99,10 +105,10 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
         } else if (tossResult === "Bowling First") {
             const result = []
             const team2Position = points[team2 -1].id
-            range(1,oversPlayed).forEach(overs => {
+            range(1,oversPlayed*6).forEach(overs => {
                 const team1Nrr = parseFloat((calculateNrr(
                     team1Runs + runsScored + 1,
-                    team1Overs + overs,
+                    team1Overs + overs/6,
                     team1AgainstRuns + runsScored,
                     team1AgainstOvers + oversPlayed
                 )).toFixed(3));
@@ -110,9 +116,8 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
                     team2Runs + runsScored,
                     team2Overs + oversPlayed,
                     team2AgainstRuns + runsScored + 1,
-                    team2AgainstOvers + overs
+                    team2AgainstOvers + overs/6
                 )).toFixed(3));
-
                 if (
                     ( team2Position === position  && team1Nrr < aboveTargetNrr && team1Nrr > team2Nrr) ||
                     (team2Position > position && team1Nrr > targetNrr && team1Nrr < aboveTargetNrr)         ||
@@ -124,7 +129,7 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
             if (result.length === 0) {
                 return `${team1Name} cannot reach position ${position} by the result of this match`;
             } else {
-                return `${team1Name} need to chase ${runsScored} runs between ${result[0][0]} and ${result[result.length -1][0]} overs.\nThe revised NRR of ${team1Name} will be between ${result[result.length -1][1]} and ${result[result.length -1][1]}.`
+                return `${team1Name} need to chase ${runsScored} runs between ${convertRunsToOvers(result[0][0])} and ${convertRunsToOvers(result[result.length -1][0])} overs.\nThe revised NRR of ${team1Name} will be between ${result[result.length -1][1]} and ${result[result.length -1][1]}.`
             }
         }
     }
