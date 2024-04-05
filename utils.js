@@ -108,15 +108,15 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
             range(1,oversPlayed*6).forEach(overs => {
                 const team1Nrr = parseFloat((calculateNrr(
                     team1Runs + runsScored + 1,
-                    team1Overs + overs/6,
+                    convertOversToActualOvers(team1Overs) + (overs/6),
                     team1AgainstRuns + runsScored,
-                    team1AgainstOvers + oversPlayed
+                    convertOversToActualOvers(team1AgainstOvers) + convertOversToActualOvers(oversPlayed)
                 )).toFixed(3));
                 const team2Nrr = parseFloat((calculateNrr(
                     team2Runs + runsScored,
-                    team2Overs + oversPlayed,
+                    convertOversToActualOvers(team2Overs) + convertOversToActualOvers(oversPlayed),
                     team2AgainstRuns + runsScored + 1,
-                    team2AgainstOvers + overs/6
+                    convertOversToActualOvers(team2AgainstOvers) + (overs/6)
                 )).toFixed(3));
                 if (
                     ( team2Position === position  && team1Nrr < aboveTargetNrr && team1Nrr > team2Nrr) ||
@@ -129,7 +129,7 @@ const calculatePoints = (team1, team2, oversPlayed, position, tossResult, runsSc
             if (result.length === 0) {
                 return `${team1Name} cannot reach position ${position} by the result of this match`;
             } else {
-                return `${team1Name} need to chase ${runsScored} runs between ${convertRunsToOvers(result[0][0])} and ${convertRunsToOvers(result[result.length -1][0])} overs.\nThe revised NRR of ${team1Name} will be between ${result[result.length -1][1]} and ${result[result.length -1][1]}.`
+                return `${team1Name} need to chase ${runsScored} runs between ${convertRunsToOvers(result[0][0])} and ${convertRunsToOvers(result[result.length -1][0])} overs.\nThe revised NRR of ${team1Name} will be between ${result[result.length -1][1]} and ${result[0][1]}.`
             }
         }
     }
